@@ -1,5 +1,4 @@
 import App from './App';
-import backgroundImg from './resources/background.jpg';
 
 function TodoApp () {
 	return(
