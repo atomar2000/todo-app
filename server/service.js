@@ -4,7 +4,7 @@ const app = express();
 const mongoose = require('mongoose');
 const User = require('./models/user')
 
-mongoose.connect('mongodb+srv://anurag:m20XP52Jm6BK85JD@todocluster.xuvjtud.mongodb.net/')
+mongoose.connect(process.env.MONGO_URL);
 const todoDb = mongoose.connection;
 todoDb.on('error', console.error.bind(console, 'connection error:'));
 todoDb.once('open', () => {
