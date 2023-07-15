@@ -13,7 +13,6 @@ function App(props) {
   const [todoCards, setTodoCards] = useState([]);
   const [completedCards, setCompletedCards] = useState([]);
 
-  // const clientId = "1061492818816-amcl919qkq9llo6dk4lb2q7ro9ele81v.apps.googleusercontent.com";
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const [loginSuccess, setLoginSuccess] = useState('false');
   const [userInfo, setUserInfo] = useState(undefined);
