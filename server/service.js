@@ -43,9 +43,9 @@ app.post('/updateCards', async (req, res) => {
     try {
         const user = await User.findOneAndUpdate(
           { userId: req.body.userId },
-          { todoCards: req.body.todoCards },
-          { inProgressCards: req.body.inProgressCards },
-          { completedCards: req.body.completedCards },
+          { todoCards: req.body.todoCards ,
+            inProgressCards: req.body.inProgressCards ,
+            completedCards: req.body.completedCards },
           { new: true }
         );
     

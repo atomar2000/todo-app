@@ -3,7 +3,7 @@ import Card from './Card.js';
 import React, { useState, useRef, useEffect } from 'react';
 import GoogleSignin from './loginComponent/login';
 import GoogleSignout from './loginComponent/logout';
-import { gapi } from 'gapi-script'
+import { gapi } from 'gapi-script';
 
 function App(props) {
 
@@ -13,7 +13,8 @@ function App(props) {
   const [todoCards, setTodoCards] = useState([]);
   const [completedCards, setCompletedCards] = useState([]);
 
-  const clientId = "1061492818816-amcl919qkq9llo6dk4lb2q7ro9ele81v.apps.googleusercontent.com";
+  // const clientId = "1061492818816-amcl919qkq9llo6dk4lb2q7ro9ele81v.apps.googleusercontent.com";
+  const clientId = process.env.GOOGLE_CLIENT_ID;
   const [loginSuccess, setLoginSuccess] = useState('false');
   const [userInfo, setUserInfo] = useState(undefined);
 
@@ -55,42 +56,8 @@ function App(props) {
 
   const baseUrl = 'http://localhost:8080';
 
-  // useEffect(() => {
-  //   fetch(`${baseUrl}`)
-  //     .then(response => response.json())
-  //     .then(data => handleFillInfo(data));
-  // }, []);
-
-  /*
-  {
-   {
-    "_id": "64aaa142c1fb53e7ffec24b8",
-    "userId": "102398675158044808329",
-    "userName": "Anurag Tomar",
-    "userGivenName": "Anurag",
-    "userImgUrl": "https://lh3.googleusercontent.com/a/AAcHTtdK6657DAphUVitSMBYgzNA4sOE0IH2QnC2a0sscme9_EI=s96-c",
-    "todoCards": [
-        {
-            "_id": "64aaa142c1fb53e7ffec24b9"
-        }
-    ],
-    "inProgressCards": [
-        {
-            "_id": "64aaa142c1fb53e7ffec24ba"
-        }
-    ],
-    "CompletedCards": [
-        {
-            "_id": "64aaa142c1fb53e7ffec24bb"
-        }
-    ],
-    "__v": 0
-}
-}
-  */
   function handleFillInfo(data) {
     if(data === null) return;
-    console.log("new added ---->",data.todoCards);
     if(data.todoCards !== undefined || data.todoCards.length !== 0) setTodoCards(data.todoCards);
     if(data.inProgressCards !== undefined || data.inProgressCards.length !== 0) setInProgressCards(data.inProgressCards);
     if(data.completedCards !== undefined || data.completedCards.length !== 0) setCompletedCards(data.completedCards);
@@ -112,9 +79,12 @@ function App(props) {
     if (type === "todoCard") {
       const componentInProgress = todoCards.filter(todoCard => todoCard.cardId === index);
       const updatedTodoCards = todoCards.filter(todoCard => todoCard.cardId !== index);
-      setTodoCards(updatedTodoCards);
       componentInProgress[0].cardType = "inProgressCard";
-      setInProgressCards([...inProgressCards, componentInProgress[0]]);
+      const newInProgressCards = [...inProgressCards, componentInProgress[0]];
+      const newTodoCards = [...updatedTodoCards];
+      setTodoCards(newTodoCards);
+      setInProgressCards(newInProgressCards);
+      if(userInfo === undefined) return;
       fetch(`${baseUrl}/updateCards`, {
         method: 'POST',
         headers: {
@@ -134,6 +104,7 @@ function App(props) {
       componentInProgress[0].cardType = "Completed";
       setInProgressCards(updatedTodoCards);
       setCompletedCards([...completedCards, componentInProgress[0]]);
+      if(userInfo === undefined) return;
       fetch(`${baseUrl}/updateCards`, {
         method: 'POST',
         headers: {
@@ -150,6 +121,7 @@ function App(props) {
     else {
       const updatedTodoCards = completedCards.filter(completedCard => completedCard.cardId !== index);
       setCompletedCards(updatedTodoCards);
+      if(userInfo === undefined) return;
       fetch(`${baseUrl}/updateCards`, {
         method: 'POST',
         headers: {
@@ -169,52 +141,52 @@ function App(props) {
     if (type === "todoCard") {
       const updatedTodoCards = todoCards.filter(todoCard => todoCard.cardId !== index);
       setTodoCards(updatedTodoCards);
+      if(userInfo === undefined) return;
       fetch(`${baseUrl}/updateCards`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"
         },
-        body: [{
+        body: JSON.stringify({
           userId: userInfo.googleId,
           todoCards: updatedTodoCards,
           inProgressCards: inProgressCards,
           completedCards: completedCards
-        }
-        ]
+        })
       })
     }
     else if (type === "inProgressCard") {
       const updatedTodoCards = inProgressCards.filter(inProgressCard => inProgressCard.cardId !== index);
       setInProgressCards(updatedTodoCards);
+      if(userInfo === undefined) return;
       fetch(`${baseUrl}/updateCards`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"
         },
-        body: [{
+        body: JSON.stringify({
           userId: userInfo.googleId,
           todoCards: todoCards,
           inProgressCards: updatedTodoCards,
           completedCards: completedCards
-        }
-        ]
+        })
       })
     }
     else {
       const updatedTodoCards = completedCards.filter(completedCard => completedCard.cardId !== index);
       setCompletedCards(updatedTodoCards);
+      if(userInfo === undefined) return;
       fetch(`${baseUrl}/updateCards`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"
         },
-        body: [{
+        body: JSON.stringify({
           userId: userInfo.googleId,
           todoCards: todoCards,
           inProgressCards: inProgressCards,
           completedCards: updatedTodoCards
-        }
-        ]
+        })
       })
     }
   }
@@ -223,7 +195,7 @@ function App(props) {
     if (newTitle === undefined || newTitle.length === 0) return 'failed';
     const newCard = { cardId: newIndex, cardTitle: newTitle, cardDescription: newDescription, cardType: "todoCard"};
     setTodoCards([...todoCards, newCard]);
-    console.log([...todoCards, newCard]);
+    if(userInfo === undefined) return 'success';
     fetch(`${baseUrl}/updateCards`, {
       method: 'POST',
       headers: {
@@ -280,7 +252,6 @@ function App(props) {
             <div className="flex flex-col items-center w-1/3 ">
               <h2 className="dark:text-white font-bold text-center">to-do</h2>
               <Card user={userInfo} type={"newTodo"} onCreateNew={handleCreateNew} />
-              {console.log("--------->", todoCards)}
               {todoCards.map(card => (
                 <Card user={userInfo} cardId={card.cardId} cardType={card.cardType} cardTitle={card.cardTitle} cardDescription={card.cardDescription} onDone={handleOnDone} onDelete={handleDelete} />
               ))}

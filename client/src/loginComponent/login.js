@@ -5,7 +5,6 @@ const clientId = "1061492818816-amcl919qkq9llo6dk4lb2q7ro9ele81v.apps.googleuser
 function GoogleSignin(props) {
 
     function onSuccess(res){
-        console.log(res)
         props.signin(true, res.profileObj);
         fetch('http://localhost:8080/user', {
             method: 'POST',

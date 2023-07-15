@@ -1,0 +1,25 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "todo-application to track progress",
+  "main": "./client/src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atomar2000/todo-app.git"
+  },
+  "keywords": [
+    "todo-app"
+  ],
+  "author": "Anurag Tomar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/atomar2000/todo-app/issues"
+  },
+  "homepage": "https://github.com/atomar2000/todo-app#readme",
+  "devDependencies": {
+    "dotenv-webpack": "^8.0.1"
+  }
+}

@@ -5,8 +5,8 @@ import _uniqueId from 'lodash/uniqueId';
 function Card(props) {
 	var pTitle = props.cardTitle;
 	var pDescription = props.cardDescription;
-	const [title, setTitle] = useState(pTitle);
-	const [description, setDescription] = useState(pDescription);
+	const [title, setTitle] = useState("");
+	const [description, setDescription] = useState("");
 
 	var titleExists = false;
 
@@ -23,7 +23,6 @@ function Card(props) {
 	}
 
 	function handleClearCard() {
-		console.log('title', title, "desc", description);
 		const result = props.onCreateNew(_uniqueId('prefix-'), title, description);
 		if (result === 'failed') {
 			return;
@@ -38,13 +37,13 @@ function Card(props) {
 		<div className="dark:bg-slate-800 dark:shadow-gray dark- bg-white rounded-xl shadow-lg w-96 h-96 flex flex-col mt-5 mb-5">
 			<div className="m-5 h-full flex flex-col justify-evenly">
 				<div className="text-xl mb-2 hover:border-blue-500">
-					<input value={title} onChange={handleOnChangeTitle} className="dark:bg-slate-700 dark:text-white w-full p-1 border-l-2 border-blue-500 hover:border-blue-700 focus:outline-none" placeholder="Title for todo" />
+					<input value={props.type === "newTodo" ? title : props.cardTitle} onChange={handleOnChangeTitle} className="dark:bg-slate-700 dark:text-white w-full p-1 border-l-2 border-blue-500 hover:border-blue-700 focus:outline-none" placeholder="Title for todo" />
 				</div>
 				<div className="w-full h-4/6">
 					<textarea
 						id="myTextArea"
 						placeholder="Enter the body"
-						value={description}
+						value={props.type === "newTodo" ? description : props.cardDescription}
 						onChange={handleOnChangeBody}
 						className="dark:bg-slate-700 dark:text-white w-full h-full m-auto p-1 resize-none focus:outline-none border-l-2 border-blue-500 focus:border-l-2 hover:border-blue-700"
 					/>
